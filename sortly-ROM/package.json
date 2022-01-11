@@ -1,0 +1,27 @@
+{
+  "name": "sortly-rom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"nodemon ./bin/www"
+  },
+  "dependencies": {
+    "express":"^4.17.2",
+    "json":"^11.0.0",
+    "nodemon":"^2.0.15",
+    "request":"^2.88.2",
+    "sequelize":"^6.12.5",
+    "mysql2":"^2.3.3",
+    "morgan":"^1.10.0",
+    "debug":"^4.3.3",
+    "dotenv":"^11.0.0"
+  },
+  "devDependencies": {
+    "sequelize-cli":"^6.3.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
