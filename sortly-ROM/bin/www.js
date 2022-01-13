@@ -2,8 +2,9 @@
 //! Module dependencies
 const app = require("../app"); // Middleware
 // debug는 node 실행 시 지정한 log만 선택하여 볼 수 있다.
-const debugh = require("debug")("http");
 const debug = require("debug")("shortly:server");
+const request = require("debug")("shortly:request");
+const debugt = require("debug");
 const http = require("http");
 
 // port 를 가져와서 express에 port를 설정한다.
@@ -14,6 +15,7 @@ const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
 
 // ! HTTP server를 생성하고 실ㅇ
+
 const server = http.createServer(app); // app또한 request listener 함수이므로 인자로 들어간다 (콜백함수)
 
 //! Listen on provided port, on all network interfaces.
@@ -53,7 +55,7 @@ function normalizePort(val) {
 
 /**
  * ? Event listener for HTTP server "error" event.
- * DEBUG=myapp:* node ./bin/www 를 terminal에 치면 나온다.
+ 를 terminal에 치면 나온다.
  * https://github.com/expressjs/generator/issues/72
  */
 
@@ -90,6 +92,14 @@ function onListening() {
   const addr = server.address();
   // This method return the bound address containing the family name, and port of the server.
   const bind = typeof port === "string" ? "pipe" + addr : "port" + addr.port;
-  console.log("Listening on " + bind);
+  // console.log("Listening on " + bind);
   debug("Listening on " + bind);
 }
+
+// debug test
+const debugE = new debugt("error:server");
+const debugR = new debugt("error:require");
+
+request("Request is this");
+debugR("Request Failure");
+debugE("404 Not Found");
