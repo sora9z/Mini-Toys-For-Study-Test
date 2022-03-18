@@ -12,7 +12,7 @@ declare module "types" {
     };
     type Cash = {
       name: "cash";
-      amount: 100 | 500 | 1000 | 5000 | 10000;
+      amount: 100 | 500 | 1000 | 5000 | 10000 | 0;
     };
     type Card = {
       name: "card";

@@ -24,9 +24,13 @@ export class VendingMachineImple implements VendingMachine {
     }
   }
 
+  public get amount() {
+    return this.payment?.amount;
+  }
+
   private choiceProduct(productId: number): types.Product | types.Err {
     const item = this.productList[productId - 1];
-    if (this.payment) {
+    if (this.payment !== null) {
       if (item.cost > this.payment.amount) {
         return "Insufficient amount";
       }
@@ -42,7 +46,7 @@ export class VendingMachineImple implements VendingMachine {
     }
   }
 
-  private productOut(item: types.Product): types.Product["name"] {
+  public productOut(item: types.Product): types.Product["name"] {
     return item.name;
   }
 
@@ -66,9 +70,9 @@ export class VendingMachineImple implements VendingMachine {
     if (!this.paymentValidation(pay)) {
       return "Invalid Payment";
     }
-    if (this.payment) {
-      this.payment.amount += pay.amount;
-    } else this.payment = { ...pay };
+    if (this.payment === null) {
+      this.payment = { ...pay };
+    } else this.payment.amount += pay.amount;
 
     return this.payment.amount;
   }
@@ -77,7 +81,6 @@ export class VendingMachineImple implements VendingMachine {
     const item = this.choiceProduct(productId);
     if (typeof item === "string") return item;
     this.calculateAmount(item);
-    this.productOut(item);
     return item;
   }
 

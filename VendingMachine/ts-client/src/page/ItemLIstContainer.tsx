@@ -4,17 +4,20 @@ import Item from '../componsnt/Item'
 import {productList} from '../assets/productlist'
 
 
-function ItemListContainer(){
-    const [items,setItems]=useState(productList.items)
+function ItemListContainer(props:any){
+    console.log(props.products.message);
+    
+    const [items,setItems]=useState(props.products)
     
     return(
         <div className="item-list-container">
             <div className="item-list-body">
-                {items.map((item:types.Product,index)=>{
-                    return <Item id={item.id} name={item.name} cost={item.cost} quantity={item.quantity} key={index}/>
+                {items.map((item:types.Product,index:number)=>{
+                    return <Item id={item.id} name={item.name} cost={item.cost} quantity={item.quantity} key={index} selectProductHandler={props.selectProductHandler} />
                 })}
             </div>
-        </div>    )
+        </div>
+        )
 }
 
 export default ItemListContainer

@@ -2,6 +2,12 @@
   text-align: center;
 }
 
+.wrapper {
+  width: 200px;
+  margin: auto;
+  border-radius: 10%;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 10vh;
@@ -15,4 +21,41 @@
 
 .App-link {
   color: #61dafb;
+}
+.wrapper {
+  border: 2px dotted red;
+  width: 50%;
+  height: auto;
+  background-color: aquamarine;
+}
+
+img {
+  width: 100;
+  height: 60px;
+}
+
+.top-container,
+.machine-display,
+.bottom-display,
+.bottom-input {
+  border: 2px dotted blue;
+  margin: 20px 20px;
+}
+.item-list-body {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  /* 가운데 정렬 */
+  width: 300px;
+  margin: auto;
+}
+
+.bottom-messages {
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
 }
