@@ -12,7 +12,7 @@ declare module "types" {
     };
     type Cash = {
       name: "cash";
-      amount: 100 | 500 | 1000 | 5000 | 10000 | 0;
+      amount: number;
     };
     type Card = {
       name: "card";
@@ -20,7 +20,9 @@ declare module "types" {
       amount: number;
     };
 
-    type Payment = Card | Cash;
+    type Input = 100 | 500 | 1000 | 5000 | 10000 | 0 | string;
+
+    type Payment = Card | Cash | { name: null; amount: 0 };
     /**
      * 종료를 나타내는 type
      */

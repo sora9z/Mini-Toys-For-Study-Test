@@ -24,16 +24,19 @@ function App() {
   const [message,setMessage]=useState("Empty")
   const [amount,setAmount]=useState(0)
 
-  function enterPayment<K extends keyof types.Cash>(userInput:K|string, cardlimit?:number){
+  function enterPayment(userInput:types.Input, cardlimit?:number){
 
     if(typeof userInput==="number"){    
        const pay:types.Payment={
         name:"cash",
-        amount:userInput
+        amount:userInput    
       }
-      const amount:number|types.Err= olbVendingMachine.enterCashOrCard(pay)  
+      const updateAmount:number|types.Err= olbVendingMachine.enterCashOrCard(pay) 
+      console.log("update",updateAmount);
+       
+      
       getAmount() // amount state update  
-      return amount
+      return updateAmount
     }
   
    if(cardlimit){
@@ -67,12 +70,8 @@ const selectProductHandler=(id:number)=>{
 }
 
   const getAmount=()=>{
-    if(typeof olbVendingMachine.amount==="number"){
       const amount:number=olbVendingMachine.amount
-      setAmount(amount)
-    }
-    else setAmount(0)
-    
+      setAmount(amount)   
   }
   
   return (

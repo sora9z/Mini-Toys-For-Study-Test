@@ -1,6 +1,5 @@
 import { types } from 'types'
 import React from 'react';
-import { isPropertySignature } from 'typescript';
 
 
 function Item({id,name,cost,quantity,selectProductHandler}:any){

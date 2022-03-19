@@ -17,7 +17,7 @@ function Input(props:any){
         e.preventDefault();
         const button:HTMLButtonElement=e.currentTarget  
         const value=Number(button.value)      
-        props.enterPayment(value)
+        props.enterPayment(Number(value))
         
     }
 
@@ -31,12 +31,12 @@ function Input(props:any){
             <div className="btn-cash-put">
                 {cashList.map((coin)=>{
                     const string=String(coin)
-                    return  <button className={string} value={coin} onClick={cashHandller}>{coin}</button>
+                    return  <button className={string} key={coin} value={coin} onClick={cashHandller}>{coin}</button>
                 })}            
             </div>
-        </div>
+        </div>  
         <div className="input-card">
-          <input name="cash-input" type="text" className="in-put" value={cardSerial} onChange={cardSerialHandller} placeholder="Serial number 입력 '-' 제외"/>
+          <input name="cash-input" type="text" className="in-put" value={cardSerial}  onChange={cardSerialHandller} placeholder="Serial number 입력 '-' 제외"/>
           <button className="btn-card-put" onClick={cardHandller}>입력완료</button>
         </div>
       </div>

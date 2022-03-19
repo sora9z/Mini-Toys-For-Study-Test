@@ -10,7 +10,6 @@ function Amount(props:any){
         </div>
 
     )
-
 }
 
 export default Amount;

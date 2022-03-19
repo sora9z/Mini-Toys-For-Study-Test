@@ -5,7 +5,6 @@ import {productList} from '../assets/productlist'
 
 
 function ItemListContainer(props:any){
-    console.log(props.products.message);
     
     const [items,setItems]=useState(props.products)
     
