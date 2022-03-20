@@ -6,10 +6,12 @@ import { productList } from 'assets/productlist';
 import { types } from 'types';
 import Amount from "./componsnt/Amount"
 import Input from 'componsnt/Input';
+import InputContainer from 'page/inputContainer';
 
 
 
 const items=productList.items
+
 
 // display amount
 
@@ -24,6 +26,25 @@ function App() {
   const [message,setMessage]=useState("Empty")
   const [amount,setAmount]=useState(0)
 
+  // 22.03.20 추가. cash, card 결제 method분리
+  function enterCash<K extends keyof types.Input>(userInput:K){
+    
+    if(typeof userInput ==='number'){
+      const pay:types.Payment={
+        name:"cash",
+        amount:userInput
+      }   
+      let newAmont:number|types.Err=olbVendingMachine.enterCashOrCard(pay)
+        // 사실장 validation만 하면 된다.
+
+      if(typeof newAmont==="string"){
+        setMessage(newAmont)
+      }
+      else
+      getAmount(newAmont+amount) // amount state update
+    }
+  }
+
   function enterPayment(userInput:types.Input, cardlimit?:number){
 
     if(typeof userInput==="number"){    
@@ -35,7 +56,7 @@ function App() {
       console.log("update",updateAmount);
        
       
-      getAmount() // amount state update  
+      // getAmount() // amount state update  
       return updateAmount
     }
   
@@ -46,7 +67,7 @@ function App() {
         amount:cardlimit
       }
       const amount:number|types.Err= olbVendingMachine.enterCashOrCard(pay)
-      getAmount() // amount state update
+      // getAmount() // amount state update
       return amount
     } 
   
@@ -59,20 +80,24 @@ function App() {
   }
 
   // select product
-const selectProductHandler=(id:number)=>{  
-  const returnItem:types.Product|types.Err= olbVendingMachine.selectProduct(id)
+const selectProductHandler=(id:number)=>{ 
+  console.log("before",amount);
+   
+  const newAmount:number|types.Err= olbVendingMachine.selectProduct(id,amount)
+  console.log("after",newAmount);
+  
   // error라면
-  if(typeof returnItem==="string"){
-    setMessage(returnItem)
+  if(typeof newAmount==="string"){
+    setMessage(newAmount)
   }
   else
-  getAmount() // amount state update
+  getAmount(newAmount) // amount state update
 }
 
-  const getAmount=()=>{
-      const amount:number=olbVendingMachine.amount
-      setAmount(amount)   
+  const getAmount=(newAmount:number)=>{
+      setAmount(newAmount)   
   }
+
   
   return (
     <div className="App">
@@ -93,8 +118,8 @@ const selectProductHandler=(id:number)=>{
           <div className="bottom-input">
             <div className="message">
             Card 또는 Cash결제만 가능합니다
-            </div>
-            <Input enterPayment={enterPayment} />
+            </div>            
+              <InputContainer enterPayment={enterCash}/>
           </div>
           <div className="bottom-output">
            

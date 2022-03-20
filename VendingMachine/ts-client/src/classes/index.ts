@@ -2,7 +2,7 @@ import { VendingMachine } from "../interface";
 import { types } from "types";
 
 export class VendingMachineImple implements VendingMachine {
-  private payment: types.Payment;
+  private payment: types.Payment; // payment의 역할 변경 -> React state로 amount를 관리하므로 사실상 필요 없다.
   private isFinishChoidProduct: boolean;
   private isValidPayment: boolean;
 
@@ -13,41 +13,24 @@ export class VendingMachineImple implements VendingMachine {
   }
 
   // class func
-  private paymentValidation(pay: types.Payment): boolean {
-    if (pay.name === "card") {
-      console.log("checking.. card serial number");
-      if (pay.serial.length === 10) return true;
-      else {
-        console.log("card serial number length must  10");
-        return false;
-      }
-    } else {
-      console.log("cheking...the cash is valid"); // 일단 cash는 기본적으로 true로 하자
-      return true;
-    }
-  }
 
   public get amount() {
     return this.payment.amount;
   }
 
-  private choiceProduct(productId: number): types.Product | types.Err {
-    const item = this.productList[productId - 1];
+  private calculateAmount(
+    item: types.Product,
+    amount: number
+  ): number | types.Err {
+    // 인자 추가 -> React상태로 관리중인 amount, quantity
+    if (amount) {
+      // 22.03.20 this.payment.name!==nuill  -> amount 0 여부 확인으로 임시 변경 (추후 react에서 결제 수단으로 변경 예정)
 
-    if (this.payment.name !== null) {
-      if (item.cost > this.payment.amount) {
-        return "Insufficient amount";
-      }
-      if (item.quantity <= 0) return "out of stock";
-      return item;
-    } else return "Insufficient amount";
-  }
+      const updateAmount = amount - item.cost;
 
-  private calculateAmount(item: types.Product) {
-    if (this.payment.name !== null) {
-      this.payment.amount -= item.cost;
       this.productList[item.id - 1].quantity -= 1;
-    }
+      return updateAmount;
+    } else return "Invalid Payment";
   }
 
   public productOut(item: types.Product): types.Product["name"] {
@@ -75,21 +58,57 @@ export class VendingMachineImple implements VendingMachine {
       return "Invalid Payment";
     }
 
-    this.payment.amount = pay.amount + this.payment.amount;
-    this.payment.name = pay.name;
-    console.log("class", this.payment);
+    // 22.03.20 React에서 클라이언트 구현할 때  사실상 아래의 과정은 필요없다. 내부적으로 Validation만 하면 된다.
+    // -> 참고 https://stackoverflow.com/questions/62262385/react-context-not-updating-for-class-as-value
 
-    return this.payment.amount;
+    // this.payment.amount += pay.amount;
+    this.payment.name = pay.name;
+    return pay.amount;
   }
 
-  selectProduct(productId: number): types.Product | types.Err {
-    console.log("select product", this.payment.amount);
+  private paymentValidation(pay: types.Payment): boolean {
+    if (pay.name === "card") {
+      console.log("checking.. card serial number");
+      if (pay.serial.length === 10) return true;
+      else {
+        console.log("card serial number length must  10");
+        return false;
+      }
+    } else {
+      console.log("cheking...the cash is valid"); // 일단 cash는 기본적으로 true로 하자
+      return true;
+    }
+  }
 
-    const item = this.choiceProduct(productId);
+  // 22.03.20 변경사항 React의 amount를 이자로 받고 선택한 item의 가격을 뺀 금액 출력 (추후 Iteme도 출력하는 것으로 변경 예정)
+  selectProduct(productId: number, amount: number): number | types.Err {
+    const item = this.choiceProduct(productId, amount);
+
     if (typeof item === "string") return item;
-    this.calculateAmount(item);
-    console.log("select product2", this.payment.amount);
-    return item;
+    // Error message
+    else {
+      const updateAmount: number | types.Err = this.calculateAmount(
+        item,
+        amount
+      );
+      return updateAmount;
+    }
+  }
+
+  private choiceProduct(
+    productId: number,
+    amount: number
+  ): types.Product | types.Err {
+    const item = this.productList[productId - 1];
+
+    if (amount) {
+      // 22.03.20 - this.payment.name!==nuill  -> amount 0 여부 확인으로 임시 변경 (추후 react에서 결제 수단으로 변경 예정)
+      if (item.cost > amount) {
+        return "Insufficient amount";
+      }
+      if (item.quantity <= 0) return "out of stock";
+      return item;
+    } else return "Insufficient amount";
   }
 
   displayAmount(): number {
