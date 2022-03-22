@@ -29,7 +29,7 @@ export class VendingMachineImple implements VendingMachine {
       const updateAmount = amount - item.cost;
 
       this.productList[item.id - 1].quantity -= 1;
-      return updateAmount;
+      return updateAmount; // 22.03.20 계산된 amount반환
     } else return "Invalid Payment";
   }
 
@@ -51,19 +51,19 @@ export class VendingMachineImple implements VendingMachine {
       };
   }
   enterCashOrCard(pay: types.Payment): number | types.Err {
-    if (this.payment.name !== null && this.payment.name !== pay.name) {
-      return "Try Again"; // 다시 돈을 넣을 때 기존의 psy method를 따라야한다.
-    }
+    // 2022-03-22 조건절 삭제 : Intance의 payment상태가 저장되지 않기 때문에 이 조건문은 있으나 마나. 이불 방법 또한 react state로 관리 돠어야 한다.
+
     if (!this.paymentValidation(pay)) {
       return "Invalid Payment";
     }
+
+    this.payment.name = pay.name;
+    return pay.amount;
 
     // 22.03.20 React에서 클라이언트 구현할 때  사실상 아래의 과정은 필요없다. 내부적으로 Validation만 하면 된다.
     // -> 참고 https://stackoverflow.com/questions/62262385/react-context-not-updating-for-class-as-value
 
     // this.payment.amount += pay.amount;
-    this.payment.name = pay.name;
-    return pay.amount;
   }
 
   private paymentValidation(pay: types.Payment): boolean {
@@ -111,12 +111,15 @@ export class VendingMachineImple implements VendingMachine {
     } else return "Insufficient amount";
   }
 
+  // React에서 상태를 관리하므로 필요없는 기능
   displayAmount(): number {
     // this.payment.name==="cash" ? 현재 남은 금액을 보여준다 this.payment.amount
 
     if (this.payment) return this.payment?.amount;
     else return 0;
   }
+
+  // React에서 상태를 관리하므로 필요없는 기능
   returnCashOrCard(): string | number {
     if (this.payment) {
       if (this.payment.name === "card") {
