@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "title": { "type": "text" },
+    "professor": { "type": "text" },
+    "major": { "type": "text" },
+    "unit": { "type": "text" },
+    "submit_date": { "type": "date", "format": "yyyy-MM-dd" },
+    "location": { "type": "geo_point" }
+  }
+}

@@ -1,0 +1,9 @@
+
+curl -X POST "localhost:9200/classes/_bulk?pretty" -H 'Content-Type: application/json' -d'
+{ "index" : { "_index" : "classes", "_id" : "1" } }
+{ "title" : "About ML", "professor": "sorakang", "major": "ML", "unit": "3", "submit_date": "2024-01-11", "location": {"lat": 39.97, "lon": -112.00} }
+{ "index" : { "_index" : "classes", "_id" : "2" } }
+{ "title" : "About ML", "professor": "sorakang2", "major": "ML", "unit": "3", "submit_date": "2024-01-12", "location": {"lat": 39.97, "lon": -112.00} }
+{ "index" : { "_index" : "classes", "_id" : "3" } }
+{ "title" : "About ML", "professor": "sorakang3", "major": "ML", "unit": "3", "submit_date": "2024-01-13", "location": {"lat": 39.97, "lon": -112.00} }
+'
