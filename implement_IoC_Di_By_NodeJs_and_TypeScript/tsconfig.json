@@ -1,0 +1,21 @@
+// tsconfig를 사용하여 프로젝트 전체에 대한 옵션을 설정할 수 있음. 없어도 실행은 가능하긴함
+{
+  "compilerOptions": {
+    "target": "ES6", // 컴파일 결과의 ECMAScript 버전
+    "module": "commonjs", // 모듈 시스템 (Node.js의 경우 commonjs)
+    "strict": true, // 엄격한 타입 검사 옵션
+    "esModuleInterop": true, // ES 모듈 호환성 설정
+    "outDir": "./dist", // 컴파일된 파일이 저장될 디렉토리
+    "rootDir": "./src", // 소스 파일의 루트 디렉토리
+    "resolveJsonModule": true, // JSON 모듈의 import를 허용
+    "skipLibCheck": true, // 라이브러리 타입 검사를 건너뜀,
+    "emitDecoratorMetadata": true, // 데코레이터 메타데이터 활성화
+    "experimentalDecorators": true // 실험적 데코레이터 활성화
+  },
+  "include": [
+    "src/**/*" // 포함할 파일들 (src 디렉토리의 모든 파일)
+  ],
+  "exclude": [
+    "node_modules" // 제외할 파일들 (node_modules 디렉토리)
+  ]
+}
