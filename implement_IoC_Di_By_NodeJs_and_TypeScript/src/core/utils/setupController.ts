@@ -18,7 +18,6 @@ export function setupController(
   controllers.forEach((controller) => {
     const instance = IoCContainer.resolve(controller) as any;
     const routes = Reflect.getMetadata("routes", controller); // Get decorator에 의해 설정됨
-    console.log("test", routes);
     routes.forEach((route: any) => {
       const handler = instance[route.handleName].bind(instance);
       switch (route.method) {
