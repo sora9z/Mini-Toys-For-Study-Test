@@ -29,7 +29,13 @@ LANGUAGE_CODE='ko-KR'
 python manage.py requirements.txt
 ```
 
-3. python manage.py runserver 로 실행
+3. 데이터베이스 마이그레이션
+
+```bash
+python manage.py makemigrations
+```
+
+4. python manage.py runserver 로 실행
 
 ## API Spec
 
@@ -60,10 +66,6 @@ API Specification
    - URL: http://{host}/{pk}/delete/
    - Description: 특정 채팅방을 삭제합니다.
    - URL Parameters: pk - 채팅방의 고유 ID
-
-ChatGPT can make mistakes. Check important info.
-?
-ChatGPT
 
 # 요구사항정리
 
