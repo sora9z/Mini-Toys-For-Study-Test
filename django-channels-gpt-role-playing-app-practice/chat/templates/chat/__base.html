@@ -1,0 +1,50 @@
+{# chat/templates/chat/base.html #} 
+<!-- 템플릿 태그 라이브러리를 로드 -->
+{% load django_bootstrap5%}
+
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>언어별 상황극 채팅 서비스</title>
+    <!-- Bootstrap의 CSS 파일을 포함하는 템플릿 태그 <head> 에 삽입 -->
+    {% bootstrap_css %}
+     <!-- Bootstrap의 JavaScript 파일을 포함하는 템플릿 태그 <body> 섹션에 삽입 -->
+    {% bootstrap_javascript %} 
+    <!--extra-css라는 이름의 블록을 정의  자식 템플릿에서 추가적인 CSS 파일이나 스타일을 삽입할 수 있는 위치를 제공 -->
+    {% block extra-css %} 
+    {%endblock %}
+  </head>
+  <body>
+    <div class="container">
+        <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+                <span class="fs-4">언어별 상황극 채팅 서비스</span>
+            </a>
+            <ul class="nav nav-pills">
+                <li class='nav-ieml'>
+                    <a href="#" class="nav-link active">새 상황 만들기</a>
+                </li>
+            </ul>
+        </header>
+    </div>
+    <div class="container">
+        <!-- bootstrap_messages 템플릿 태그를 사용하여 메시지를 표시 -->
+         {% bootstrap_messages %}
+         {% block content %} 
+          <!-- 이 블록은 자식 템플릿에서 덮어씁니다 -->
+         {% endblock %}
+         <footer class="pt-4 my0md-5 border-top">
+            <div class="row">
+            </div>
+        </footer>
+        {% block script %} 
+         <!-- 이 블록은 자식 템플릿에서 덮어씁니다 -->
+        {%endblock%}
+                
+</html>

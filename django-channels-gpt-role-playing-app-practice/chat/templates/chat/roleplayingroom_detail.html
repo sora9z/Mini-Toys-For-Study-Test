@@ -1,0 +1,180 @@
+{% extends "chat/base.html" %}
+<!-- -->
+{% block extra-css %}
+<style>
+  #chat-message-list {
+    padding: 0;
+    list-style: none;
+  }
+  .chat-message .message {
+    background-color: #3b3b3d;
+    color: #e1e1e1;
+    border-radius: 0.8em;
+    padding: 0.4em;
+    margin: 0.4em 0;
+    display: inline-block;
+    white-space: pre-wrap;
+  }
+  .chat-message.me {
+    text-align: right;
+  }
+  .chat-message.me .message {
+    background-color: #1f8cff;
+    color: #fff;
+    text-align: left;
+  }
+  .chat-message .say {
+    display: block;
+    font-size: 0.8em;
+    margin-top: -0.4em;
+    margin-left: 0.2em;
+    cursor: pointer;
+  }
+</style>
+{% endblock %}
+<!-- -->
+{% block content %}
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        [{{ roleplayingroom.get_language_display }} {{
+        roleplayingroom.get_level_display }}] {{ roleplayingroom.situation }}
+        ({{ roleplayingroom.gpt_role }}와 {{ roleplayingroom.my_role }}의 대화)
+      </div>
+      <div class="card-body">
+        <ul id="chat-message-list"></ul>
+      </div>
+      <div class="card-footer">
+        <div class="d-grid gap-2 mb-2">
+          <button id="auto-play-button" class="btn btn-primary">
+            자동읽기
+          </button>
+          <button id="stop-button" class="btn btn-secondary">정지</button>
+        </div>
+        <select id="voice-list" class="form-select mb-2"></select>
+        <div class="d-flex gap-2">
+          <button class="btn btn-secondary" id="recommend-button">
+            추천받기
+          </button>
+          <form id="message-form" class="d-flex gap-1 flex-grow-1">
+            <input
+              type="text"
+              name="message"
+              placeholder="메시지를 입력하세요."
+              class="form-control flex-grow-1"
+            />
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="my-3">
+  <a
+    href="{% url 'role_playing_room_edit' roleplayingroom.pk %}"
+    class="btn btn-primary"
+    >수정</a
+  >
+  <a
+    href="{% url 'role_playing_room_delete' roleplayingroom.pk %}"
+    class="btn btn-danger"
+    >삭제</a
+  >
+</div>
+{% endblock %}
+<!--장고에서는 json_script 템플릿 필터를 통해 서버단에서 템플릿 렌더링 시에 JS에서 참조할 값을 미리 JSON 직렬화해서 렌더링 해둔다-->
+{% block script %}
+<!-- 렌더링한  json문자열은 script 태그로 감싸지며 id는 room-pk로 지정-->
+{{roleplayingroom.pk|json_script:"room-pk" }}
+{{roleplayingroom.language|json_script:"room-language" }}
+<!---->
+<script>
+  function sayMessage(message, language) {
+    const lang = language.split("-")[0]; // en-US -> en
+    const voiceUrl = `/voice/?message=${encodeURIComponent(
+      message
+    )}&lang=${lang}`;
+    const audio = new Audio();
+    audio.src = voiceUrl;
+    audio.play();
+  }
+
+  function addMessage(message, isMe) {
+    const messageList = document.getElementById("chat-message-list");
+    const messageElement = document.createElement("li");
+    messageElement.className = "chat-message" + (isMe ? " me" : "");
+    messageElement.innerHTML = `
+    <span class="message">${message}</span>
+    <span class="say">읽어주기</span>
+    `;
+    messageList.appendChild(messageElement);
+    messageList.scrollTop = messageList.scrollHeight;
+
+    messageElement.querySelector(".say").addEventListener("click", () => {
+      sayMessage(message, room_language);
+    });
+  }
+  let is_auto_play = false;
+  const room_pk = document.querySelector("#room-pk").textContent;
+  const room_language = JSON.parse(
+    document.querySelector("#room-language").textContent
+  );
+  const ws = new WebSocket(`ws://${window.location.host}/ws/chat/${room_pk}/`);
+
+  ws.onopen = function (event) {
+    console.log("socket connected");
+  };
+  ws.onclose = function (event) {
+    console.log("socket disconnected");
+  };
+  ws.onerror = function (event) {
+    console.error("socket error:", event);
+  };
+  ws.onmessage = function (event) {
+    const message_obj = JSON.parse(event.data);
+    if (message_obj.type === "assistant-message") {
+      const { message } = message_obj;
+      addMessage(message, false);
+      if (is_auto_play) {
+        sayMessage(message, room_language);
+      }
+    } else if (message_obj.type === "recommended-message") {
+      const { message } = message_obj;
+      console.log("recommended-message :", message);
+      document.querySelector("#message-form [name='message']").value = message;
+      recommendButton.disabled = false;
+    } else {
+      console.error("unknown message type:", message_obj);
+    }
+    console.group("[onmessages]");
+    console.log(typeof event.data);
+    console.log(event.data);
+    console.groupEnd();
+  };
+
+  const messageForm = document.querySelector("#message-form");
+  messageForm.onsubmit = function (e) {
+    e.preventDefault();
+    const message = e.target.message.value.trim();
+    if (message.length > 0) {
+      addMessage(message, true);
+      ws.send(JSON.stringify({ type: "user-message", message: message }));
+      e.target.reset();
+    }
+  };
+
+  const recommendButton = document.querySelector("#recommend-button");
+  recommendButton.addEventListener("click", () => {
+    recommendButton.disabled = true; // 중복 클릭 방지
+    ws.send(JSON.stringify({ type: "request-recommend-message" }));
+  });
+
+  const autoPlayButton = document.querySelector("#auto-play-button");
+  autoPlayButton.addEventListener("click", () => {
+    is_auto_play = true;
+    autoPlayButton.remove();
+  });
+</script>
+
+{% endblock %}
