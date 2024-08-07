@@ -37,6 +37,13 @@ python manage.py makemigrations
 
 4. python manage.py runserver 로 실행
 
+## client 실행
+
+1. 서버 실행 후 http://{host}/ 로 접속
+2. 새 상황 마들기 -> 영어 부분은 작성하지 않으면 자동 번역이 된다
+3. 자동재생을 누르면 gpt가 말할 때마다 음성이 나온다.
+4. 추천받기 버튼을 누르면 추천 표현을 받을 수 있다.
+
 ## API Spec
 
 알겠습니다. 아래는 요청된 형식으로 간단하게 작성된 API 명세서입니다.
