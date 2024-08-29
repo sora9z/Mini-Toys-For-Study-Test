@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import os
+import dj_database_url
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,13 +23,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-)tl=d)bb8-+c44az$**mex!eetl67anaq!@%trx_7q3&5bvh%q'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','django-insecure-)tl=d)bb8-+c44az$**mex!eetl67anaq!@%trx_7q3&5bvh%q')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS 값은 ['localhost', '127.0.0.1', '[::1]'] 또는 Koyeb에서 제공한 Public URL로 설정됩니다.
+ALLOWED_HOSTS = os.getenv("KOYEB_PUBLIC_DOMAIN", "localhost,127.0.0.1,[::1]").split(",")
 
+# 이 값을 CSRF_TRUSTED_ORIGINS에 사용할 때는 URL 스키마를 추가해야 합니다.
+CSRF_TRUSTED_ORIGINS = [f"https://{host}" for host in ALLOWED_HOSTS if host not in ['localhost', '127.0.0.1', '[::1]']]
 
 # Application definition
 
@@ -50,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'quiz_api.urls'
@@ -82,6 +89,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation
@@ -121,6 +130,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 # 정적 파일 관리를 위한 디렉토리
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

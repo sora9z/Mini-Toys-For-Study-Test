@@ -1,0 +1,9 @@
+name: quiz-app-backend
+
+services:
+  - name: quiz-backend
+    image:
+      build:
+        context: ./backend # Dockerfile이 있는 디렉토리 경로
+    ports:
+      - 8000:8000 # Django의 기본 포트
