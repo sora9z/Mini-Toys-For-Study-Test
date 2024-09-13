@@ -1,5 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:client/model/mode.quiz.dart';
+import 'package:client/model/model_quiz.dart';
 import 'package:client/screen/screen_result.dart';
 import 'package:client/widget/widget_candidate.dart';
 import 'package:flutter/material.dart';

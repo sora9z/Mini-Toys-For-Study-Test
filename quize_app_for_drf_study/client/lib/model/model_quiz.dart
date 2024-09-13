@@ -11,4 +11,9 @@ class Quiz {
       : title = map['title'],
         candidates = map['candidates'],
         answer = map['answer'];
+
+  Quiz.formJson(Map<String, dynamic> json)
+      : title = json['title'],
+        candidates = json['body'].toString().split('/'),
+        answer = json['answer'];
 }

@@ -1,4 +1,4 @@
-import 'package:client/model/mode.quiz.dart';
+import 'package:client/model/model_quiz.dart';
 import 'package:client/screen/screen_home.dart';
 import 'package:flutter/material.dart';
 

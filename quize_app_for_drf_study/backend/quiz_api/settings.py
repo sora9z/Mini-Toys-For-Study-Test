@@ -29,7 +29,6 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY','django-insecure-)tl=d)bb8-+c44a
 DEBUG = False
 
 # ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS 값은 ['localhost', '127.0.0.1', '[::1]'] 또는 Koyeb에서 제공한 Public URL로 설정됩니다.
 ALLOWED_HOSTS = os.getenv("KOYEB_PUBLIC_DOMAIN", "localhost,127.0.0.1,[::1]").split(",")
 
 # 이 값을 CSRF_TRUSTED_ORIGINS에 사용할 때는 URL 스키마를 추가해야 합니다.
@@ -127,7 +126,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "/static/"
 # 정적 파일 관리를 위한 디렉토리
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -137,3 +136,22 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
