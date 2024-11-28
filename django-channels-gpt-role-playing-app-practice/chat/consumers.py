@@ -33,7 +33,6 @@ class RolePlayingRoomConsumer(JsonWebsocketConsumer):
             )
 
 
-
     def receive_json(self, content_dict, **kwargs):
         if content_dict["type"] =="user-message":
             assistant_message = self.get_query(user_query=content_dict["message"])
