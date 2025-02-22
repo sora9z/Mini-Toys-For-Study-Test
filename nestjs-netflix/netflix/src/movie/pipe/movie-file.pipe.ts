@@ -48,7 +48,7 @@ export class MovieFilePipe
       extension = split[split.length - 1];
     }
     const shortFileName = v4().split('-')[0]; // UUID의 일부만 사용
-    const filename = `${shortFileName}_${Date.now()}.${extension}`;
+    const filename = `${Date.now()}_${shortFileName}.${extension}`;
     const newPath = join(value.destination, filename);
 
     await rename(value.path, newPath);

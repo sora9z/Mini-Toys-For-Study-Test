@@ -13,6 +13,7 @@ export class CreateMovieDto {
   title: string;
 
   @IsNotEmpty()
+  @IsString()
   detail: string;
 
   @IsNotEmpty()
@@ -22,6 +23,10 @@ export class CreateMovieDto {
   @IsArray()
   @ArrayNotEmpty()
   @IsNumber({}, { each: true })
-  @Type(() => Number) // number로 변환
+  @Type(() => Number)
   genreIds: number[];
+
+  @IsNotEmpty()
+  @IsString()
+  movieFileName: string;
 }

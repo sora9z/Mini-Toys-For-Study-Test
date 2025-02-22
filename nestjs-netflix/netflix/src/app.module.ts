@@ -25,6 +25,8 @@ import { RBACGuard } from './auth/guard/rbac.guard';
 import { ResponseTimeInterceptor } from './common/interceptor/response-time.interceptor';
 import { ForbiddenExceptionFilter } from './common/filter/forbiden.filter';
 import { QueryFailedExcaptionFilter } from './common/filter/query-failed.filter';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -57,6 +59,10 @@ import { QueryFailedExcaptionFilter } from './common/filter/query-failed.filter'
         logging: true,
       }),
       inject: [ConfigService],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'public'), // rootPath를 process.cwd()만 하면 서버 내의 모든 파일에 접근이 가능해서 보안상 좋지 않다.
+      serveRoot: '/public/', // 시작 경로를 지정할 수 있다.
     }),
     MovieModule,
     DirectorModule,

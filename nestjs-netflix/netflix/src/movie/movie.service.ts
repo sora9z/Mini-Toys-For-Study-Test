@@ -13,6 +13,8 @@ import { Director } from 'src/director/entity/director.entity';
 import { Genre } from 'src/genre/entity/genre.entity';
 import { GetMoviesDto } from './dto/get-movies.dto';
 import { CommonService } from 'src/common/common.service';
+import { join } from 'path';
+import { rename } from 'fs/promises';
 
 @Injectable()
 export class MovieService {
@@ -60,6 +62,7 @@ export class MovieService {
       .leftJoinAndSelect('movie.director', 'director')
       .leftJoinAndSelect('movie.genres', 'genres')
       .leftJoinAndSelect('movie.detail', 'detail')
+      .leftJoinAndSelect('movie.creator', 'creator')
       .where('movie.id =  :id', { id })
       .getOne();
 
@@ -70,7 +73,11 @@ export class MovieService {
     return movie;
   }
 
-  async create(createMovieDto: CreateMovieDto, qr: QueryRunner) {
+  async create(
+    createMovieDto: CreateMovieDto,
+    userId: number,
+    qr: QueryRunner,
+  ) {
     const director = await qr.manager.findOne(Director, {
       where: {
         id: createMovieDto.directorId,
@@ -106,6 +113,8 @@ export class MovieService {
     // execute 메서드는 삽입된 레코드의 기본키를 포함한는 identifiers 배열을 반환한다.
     const movieDetailId = movieDetail.identifiers[0].id;
 
+    const movieFolder = join('public', 'movie');
+
     const movie = await qr.manager
       .createQueryBuilder()
       .insert()
@@ -116,6 +125,10 @@ export class MovieService {
           id: movieDetailId,
         },
         director,
+        creator: {
+          id: userId,
+        },
+        movieFilePath: join(movieFolder, createMovieDto.movieFileName),
       })
       .execute();
 
@@ -126,6 +139,13 @@ export class MovieService {
       .relation(Movie, 'genres')
       .of(movieId)
       .add(genres.map((genre) => genre.id));
+
+    const tempFolder = join('public', 'temp');
+
+    await rename(
+      join(process.cwd(), tempFolder, createMovieDto.movieFileName),
+      join(process.cwd(), movieFolder, createMovieDto.movieFileName),
+    );
 
     return await qr.manager.findOne(Movie, {
       where: {
