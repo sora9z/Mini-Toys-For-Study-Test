@@ -45,6 +45,7 @@ export class BearerTokenMiddleware implements NestMiddleware {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: secretKey,
       });
+      console.log('ssfsfsfsgag', payload);
       req.user = payload;
       next();
     } catch (e) {
